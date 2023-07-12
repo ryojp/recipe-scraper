@@ -43,6 +43,8 @@ func vulgarToDecimal(vulgar string) string {
 // toInt converts the string to int, ignoring potential errors
 // Returns 0 if the argument is an empty string
 func toInt(str string) int {
+	// trim potential commas
+	str = strings.Replace(str, ",", "", -1)
 	i, _ := strconv.Atoi(str)
 	return i
 }
