@@ -18,6 +18,9 @@ func main() {
 		"https://www.allrecipes.com/recipe/176132/slow-cooker-buffalo-chicken-sandwiches/",
 		"Initial URL to crawl",
 	)
+	delay := flag.Int("delay", 2000, "Milliseconds between requests")
+	parallel := flag.Int("parallel", 2, "Number of concurrnet requests")
+	outfile := flag.String("out", "allrecipes.json", "Filename for the output JSON")
 
 	flag.Parse()
 
@@ -36,8 +39,8 @@ func main() {
 
 	c.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 2,
-		RandomDelay: 2 * time.Second,
+		Parallelism: *parallel,
+		RandomDelay: time.Duration(*delay) * time.Millisecond,
 	})
 
 	recipes := allrecipes.Recipes{}
@@ -54,7 +57,7 @@ func main() {
 		recipes.Add(recipe)
 
 		// recursively visit recipe pages shown in section "You'll Also Love"
-		for _, url := range e.ChildAttrs("#recirc-section__card-list-1_1-0 a", "href") {
+		for _, url := range e.ChildAttrs(".recirc-section a", "href") {
 			e.Request.Visit(url)
 		}
 	})
@@ -66,5 +69,5 @@ func main() {
 	c.Wait()
 
 	// Export the collected recipes to JSON
-	recipes.DumpJSON("allrecipes.json")
+	recipes.DumpJSON(*outfile)
 }

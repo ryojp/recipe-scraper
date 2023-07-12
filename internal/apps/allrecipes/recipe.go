@@ -69,5 +69,9 @@ func (recipes *Recipes) DumpJSON(filename string) {
 	enc.SetIndent("", "  ")
 
 	// Dump json to the standard output
-	enc.Encode(recipes.recipes)
+	err = enc.Encode(recipes.recipes)
+	if err != nil {
+		log.Fatalf("Failed to dump to JSON: %s\n", err)
+		return
+	}
 }

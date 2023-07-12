@@ -9,7 +9,15 @@ Inspired by [shaansubbaiah/allrecipes-scraper](https://github.com/shaansubbaiah/
 * Installation of `go`
 
 ## Usage
-* Run `go run ./cmd/allrecipes -depth 5` to crawl recipes with at most five recursion.
+* Example:
+  ```sh
+  go run ./cmd/allrecipes -depth 3 -parallel 2 -delay 500 -start https://www.allrecipes.com/recipe/20144/banana-banana-bread/
+  ```
+  When I ran this command, I got 77 recipes. The output JSON is located at `allrecipes.json` by default.
+* `help` available:
+  ```sh
+  go run ./cmd/allrecipes -help
+  ```
 
 ## Example
 ```json
