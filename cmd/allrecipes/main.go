@@ -56,7 +56,7 @@ func main() {
 		recipes.Add(recipe)
 
 		// recursively visit recipe pages shown in section "You'll Also Love"
-		for _, url := range e.ChildAttrs("#recirc-section__card-list-1_1-0 a", "href") {
+		for _, url := range e.ChildAttrs(".recirc-section a", "href") {
 			e.Request.Visit(url)
 		}
 	})
