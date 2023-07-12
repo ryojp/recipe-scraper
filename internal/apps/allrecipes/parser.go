@@ -22,10 +22,10 @@ func ParseRecipe(e *colly.HTMLElement) *Recipe {
 
 	recipe := &Recipe{
 		Title:    e.ChildText("h1"),
-		Summary:  e.ChildText("#article-subheading_2-0"),
+		Summary:  e.ChildText(".article-subheading"),
 		URL:      e.Request.URL.String(),
 		ImageURL: imageURL,
-		Author:   e.ChildText("#mntl-bylines__item_2-0 a"),
+		Author:   e.ChildText(".mntl-bylines__item a"),
 	}
 	recipe.parseStats(e)
 	recipe.parseTimeAndServings(e)
@@ -37,22 +37,22 @@ func ParseRecipe(e *colly.HTMLElement) *Recipe {
 }
 
 func (recipe *Recipe) parseStats(e *colly.HTMLElement) error {
-	numRatings := e.ChildText("#mntl-recipe-review-bar__rating-count_2-0")
+	numRatings := e.ChildText(".mntl-recipe-review-bar__rating-count")
 	if numRatings != "" {
 		numRatings = numRatings[1 : len(numRatings)-1] // tirm parenthesis
 	}
 
-	recipe.Rating = e.ChildText("#mntl-recipe-review-bar__rating_2-0")
+	recipe.Rating = strings.TrimSpace(e.ChildText(".mntl-recipe-review-bar__rating"))
 	recipe.NumRatings = toInt(numRatings)
-	recipe.NumReviews = toInt(strings.Split(e.ChildText("#mntl-recipe-review-bar__comment-count_2-0"), " ")[0])
-	recipe.NumPhotos = toInt(strings.Split(e.ChildText("#recipe-review-bar__photo-count_2-0"), " ")[0])
+	recipe.NumReviews = toInt(strings.Split(e.ChildText(".mntl-recipe-review-bar__comment-count"), " ")[0])
+	recipe.NumPhotos = toInt(strings.Split(e.ChildText(".recipe-review-bar__photo-count"), " ")[0])
 
 	return nil
 }
 
 // parseTimeAndServings populates `PrepTime`, `CookTime`, `TotalTime`, and `Servings`
 func (recipe *Recipe) parseTimeAndServings(e *colly.HTMLElement) error {
-	texts := strings.Split(e.ChildText("#recipe-details_1-0 .mntl-recipe-details__content"), "\n")
+	texts := strings.Split(e.ChildText(".recipe-details .mntl-recipe-details__content"), "\n")
 	mode := ""
 	for _, text := range texts {
 		text = strings.TrimSpace(text)
@@ -109,7 +109,7 @@ func (recipe *Recipe) parseIngredients(e *colly.HTMLElement) error {
 
 // parseDirections populates `directions` field
 func (recipe *Recipe) parseDirections(e *colly.HTMLElement) error {
-	selection := e.DOM.Find("#recipe__steps-content_1-0 ol")
+	selection := e.DOM.Find(".recipe__steps-content ol")
 
 	var directions []string
 	selection.Children().Each(func(_ int, s *goquery.Selection) {
@@ -123,7 +123,7 @@ func (recipe *Recipe) parseDirections(e *colly.HTMLElement) error {
 
 // parseNutrition populates `Calories`, `Fat`, `Carbs`, and `Protein`
 func (recipe *Recipe) parseNutrition(e *colly.HTMLElement) error {
-	selection := e.DOM.Find("#mntl-nutrition-facts-summary_1-0 tbody")
+	selection := e.DOM.Find(".mntl-nutrition-facts-summary tbody")
 
 	selection.Children().Each(func(_ int, s *goquery.Selection) {
 		value := s.Find("td:first-of-type").Text()
