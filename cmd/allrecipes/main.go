@@ -20,6 +20,7 @@ func main() {
 	)
 	delay := flag.Int("delay", 2000, "Milliseconds between requests")
 	parallel := flag.Int("parallel", 2, "Number of concurrnet requests")
+	outfile := flag.String("out", "allrecipes.json", "Filename for the output JSON")
 
 	flag.Parse()
 
@@ -68,5 +69,5 @@ func main() {
 	c.Wait()
 
 	// Export the collected recipes to JSON
-	recipes.DumpJSON("allrecipes.json")
+	recipes.DumpJSON(*outfile)
 }
