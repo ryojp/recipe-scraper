@@ -18,6 +18,8 @@ func main() {
 		"https://www.allrecipes.com/recipe/176132/slow-cooker-buffalo-chicken-sandwiches/",
 		"Initial URL to crawl",
 	)
+	delay := flag.Int("delay", 2000, "Milliseconds between requests")
+	parallel := flag.Int("parallel", 2, "Number of concurrnet requests")
 
 	flag.Parse()
 
@@ -36,8 +38,8 @@ func main() {
 
 	c.Limit(&colly.LimitRule{
 		DomainGlob:  "*",
-		Parallelism: 2,
-		RandomDelay: 2 * time.Second,
+		Parallelism: *parallel,
+		RandomDelay: time.Duration(*delay) * time.Millisecond,
 	})
 
 	recipes := allrecipes.Recipes{}
