@@ -3,7 +3,10 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
+	"os/signal"
 	"regexp"
+	"syscall"
 	"time"
 
 	"github.com/gocolly/colly/v2"
@@ -44,6 +47,17 @@ func main() {
 	})
 
 	recipes := allrecipes.Recipes{}
+
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	// Dump collected recipes and exit upon receiving signals
+	go func() {
+		sig := <-sigs
+		log.Println("Received signal", sig.String())
+		recipes.DumpJSON(*outfile)
+		os.Exit(1)
+	}()
 
 	// Extract details of the course
 	c.OnHTML(`body`, func(e *colly.HTMLElement) {
