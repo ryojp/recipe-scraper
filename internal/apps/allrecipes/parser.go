@@ -17,7 +17,7 @@ var plu = pluralize.NewClient()
 func ParseRecipe(e *colly.HTMLElement) *Recipe {
 	imageURL := e.ChildAttr("div.article-content img", "src")
 	if imageURL == "" {
-		imageURL = e.ChildAttr("#recipe__steps-content_1-0 img", "data-src")
+		imageURL = e.ChildAttr(".recipe__steps-content img", "data-src")
 	}
 
 	recipe := &Recipe{
@@ -36,6 +36,7 @@ func ParseRecipe(e *colly.HTMLElement) *Recipe {
 	return recipe
 }
 
+// parseStats populates `Rating`, `NumRatings`, `NumReviews`, and `NumPhotos“
 func (recipe *Recipe) parseStats(e *colly.HTMLElement) error {
 	numRatings := e.ChildText(".mntl-recipe-review-bar__rating-count")
 	if numRatings != "" {

@@ -11,9 +11,9 @@ Inspired by [shaansubbaiah/allrecipes-scraper](https://github.com/shaansubbaiah/
 ## Usage
 * Example:
   ```sh
-  go run ./cmd/allrecipes -depth 3 -parallel 2 -delay 500 -start https://www.allrecipes.com/recipe/20144/banana-banana-bread/
+  go run ./cmd/allrecipes -depth 3 -parallel 2 -delay 500 -start https://www.allrecipes.com/recipe/20144/banana-banana-bread/ -out allrecipes.json
   ```
-  When I ran this command, I got 77 recipes. The output JSON is located at `allrecipes.json` by default.
+  When I ran this command, I got 77 recipes exported as `allrecipes.json`.
 * `help` available:
   ```sh
   go run ./cmd/allrecipes -help
