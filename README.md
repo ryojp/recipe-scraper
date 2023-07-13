@@ -126,3 +126,8 @@ Inspired by [shaansubbaiah/allrecipes-scraper](https://github.com/shaansubbaiah/
   }
 ]
 ```
+
+## Testing
+```sh
+go test -v ./...
+```
