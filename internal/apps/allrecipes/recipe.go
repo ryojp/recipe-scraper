@@ -41,16 +41,22 @@ type Ingredient struct {
 	Name     string `json:"name"`
 }
 
-// Recipes is a thread-safe recipe array
+// Recipes is a thread-safe recipe map
 type Recipes struct {
-	recipes []Recipe
+	recipes map[string]Recipe
 	mux     sync.Mutex
 }
 
-// Add adds a given recipe to the recipes array
+// Add adds a given recipe to the recipes map if not yet added
 func (recipes *Recipes) Add(recipe *Recipe) {
 	recipes.mux.Lock()
-	recipes.recipes = append(recipes.recipes, *recipe)
+	if recipes.recipes == nil {
+		recipes.recipes = make(map[string]Recipe)
+	}
+	_, ok := recipes.recipes[recipe.URL]
+	if !ok {
+		recipes.recipes[recipe.URL] = *recipe
+	}
 	recipes.mux.Unlock()
 }
 
@@ -66,16 +72,20 @@ func (recipes *Recipes) DumpJSON(filename string) {
 	enc := json.NewEncoder(file)
 	enc.SetIndent("", "  ")
 
+	// To dump recipes as an array, convert recipes map to an array
 	recipes.mux.Lock()
+	var recipeSlice []Recipe
+	for _, recipe := range recipes.recipes {
+		recipeSlice = append(recipeSlice, recipe)
+	}
+	recipes.mux.Unlock()
 
-	fmt.Printf("Dumping the collected %v recipes into %q...\n", len(recipes.recipes), filename)
+	fmt.Printf("Dumping the collected %v recipes into %q...\n", len(recipeSlice), filename)
 
 	// Dump json to the standard output
-	err = enc.Encode(recipes.recipes)
+	err = enc.Encode(recipeSlice)
 	if err != nil {
 		log.Fatalf("Failed to dump to JSON: %s\n", err)
 		return
 	}
-
-	recipes.mux.Unlock()
 }
