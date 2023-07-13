@@ -47,7 +47,7 @@ type Recipes struct {
 	mux     sync.Mutex
 }
 
-// Add adds a given recipe to the recipes map if not yet added
+// Add adds a given recipe to the data store if not yet added
 func (recipes *Recipes) Add(recipe *Recipe) {
 	recipes.mux.Lock()
 	if recipes.recipes == nil {
@@ -58,6 +58,14 @@ func (recipes *Recipes) Add(recipe *Recipe) {
 		recipes.recipes[recipe.URL] = *recipe
 	}
 	recipes.mux.Unlock()
+}
+
+// Exists checks if the url exists in the data store
+func (recipes *Recipes) Exists(url string) bool {
+	recipes.mux.Lock()
+	_, ok := recipes.recipes[url]
+	recipes.mux.Unlock()
+	return ok
 }
 
 // DumpJSON dumps the recipes into a json file

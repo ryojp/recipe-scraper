@@ -72,7 +72,9 @@ func main() {
 
 		// recursively visit recipe pages shown in section "You'll Also Love"
 		for _, url := range e.ChildAttrs(".recirc-section a", "href") {
-			e.Request.Visit(url)
+			if !recipes.Exists(url) {
+				e.Request.Visit(url) // visit only if the url is new
+			}
 		}
 	})
 
