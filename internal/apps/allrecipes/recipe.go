@@ -63,10 +63,12 @@ func (recipes *Recipes) DumpJSON(filename string) {
 	}
 	defer file.Close()
 
-	fmt.Printf("Dumping the collected %v recipes into %q...\n", len(recipes.recipes), filename)
-
 	enc := json.NewEncoder(file)
 	enc.SetIndent("", "  ")
+
+	recipes.mux.Lock()
+
+	fmt.Printf("Dumping the collected %v recipes into %q...\n", len(recipes.recipes), filename)
 
 	// Dump json to the standard output
 	err = enc.Encode(recipes.recipes)
@@ -74,4 +76,6 @@ func (recipes *Recipes) DumpJSON(filename string) {
 		log.Fatalf("Failed to dump to JSON: %s\n", err)
 		return
 	}
+
+	recipes.mux.Unlock()
 }
