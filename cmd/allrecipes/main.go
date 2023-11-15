@@ -24,6 +24,7 @@ func main() {
 	delay := flag.Int("delay", 2000, "Milliseconds between requests")
 	parallel := flag.Int("parallel", 2, "Number of concurrnet requests")
 	outfile := flag.String("out", "allrecipes.json", "Filename for the output JSON")
+	cacheDir := flag.String("cache", "./.cache/allrecipes", "Cache directory for scraping")
 
 	flag.Parse()
 
@@ -32,7 +33,7 @@ func main() {
 		colly.URLFilters(
 			regexp.MustCompile(`https://www.allrecipes.com/recipe/\d+/.*`),
 		),
-		colly.CacheDir("./.cache/allrecipes"),
+		colly.CacheDir(*cacheDir),
 		colly.MaxDepth(*maxDepth),
 		colly.Async(),
 	)
